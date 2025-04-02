@@ -1,0 +1,68 @@
+/*Task 1. Display all students details with  class name, section name,teacher name and
+ sort by user creation date descending, name alphabetcally*/
+
+select users.user_name,users.user_dob,users.user_created_on,class.class_name,section.section_name from users
+inner join class on users.user_id=class.id join section on section.id=class.section_id 
+order by users.user_name asc,users.user_created_on desc;
+
+
+/*Task 2. Display all teachers with class_name of sections A and B*/
+select*from class;
+
+select users.user_name,class.class_name,section.section_name from users
+join class on users.user_id=class.teacher_id
+join section on class.section_id=section.id 
+where section.section_name in('A','B') and users.user_role='teacher' ;
+
+
+
+/*Task 3. Display all students of class I which having sections B or C*/
+select users.user_name,class.class_name,section.section_name from users
+join class on users.user_id=class.id
+join section on class.section_id=section.id 
+where users.user_role='student' and section.section_name in ('B','C');
+
+
+
+/*Task 4. Update 1st,3rd and 4th students dob 2000-10-01, 2001-09-11, 2002-08-11 respectively*/
+update users 
+set user_dob=case user_id
+	when 101 then '2000-10-01'
+    when 103 then '2001-09-11'
+    when 104 then '2002-08-11'
+    end
+where user_id in (101,103,104);
+
+
+
+
+/*Task 5. display all students which having dob from 2000-09-01 to 2001-09-13 and name start with A*/
+select *from users
+where user_role='student' and user_dob between '2000-03-01' and '2001-09-13' having user_name like 'A%';
+
+
+
+/*Task 6. display number of students belongs to class I and Class II */
+select count(*) as students from users join
+enroll on users.user_id=enroll.class_id;
+select count(*)as students from class
+join enroll on class.id=enroll.class_id;
+
+
+
+/*Task 7. update students of section C to class II*/
+update enroll
+join class on enroll.id=class.id
+join section on section.id=class.section_id
+set enroll.class_id=104
+where section.section_name='C';
+select*from enroll;
+
+
+
+/*Task 8. Delete all users of section B*/
+delete users from users
+join enroll on enroll.student_id=users.user_id
+join class on class.id=enroll.class_id
+join section on section.id=class.section_id
+where section.section_name='B';
