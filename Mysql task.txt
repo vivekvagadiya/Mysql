@@ -1,9 +1,20 @@
 /*Task 1. Display all students details with  class name, section name,teacher name and
  sort by user creation date descending, name alphabetcally*/
 
-select users.user_name,users.user_dob,users.user_created_on,class.class_name,section.section_name from users
-inner join class on users.user_id=class.id join section on section.id=class.section_id 
-order by users.user_name asc,users.user_created_on desc;
+select 
+    users.user_name as student_name, 
+    users.user_dob, 
+    users.user_created_on, 
+    class.class_name, 
+    section.section_name, 
+    t.user_name as teacher_name
+from users 
+join enroll  on users.user_id = enroll.student_id
+join class  on enroll.class_id = class.id
+join section  on class.section_id = section.id
+join users t on class.teacher_id = t.user_id
+where users.user_role = 'student'
+order by users.user_created_on desc, users.user_name asc;
 
 
 /*Task 2. Display all teachers with class_name of sections A and B*/
@@ -20,7 +31,8 @@ where section.section_name in('A','B') and users.user_role='teacher' ;
 select users.user_name,class.class_name,section.section_name from users
 join class on users.user_id=class.id
 join section on class.section_id=section.id 
-where users.user_role='student' and section.section_name in ('B','C');
+where users.user_role='student' and class.class_name='I' and section.section_name in ('B','C');
+	
 
 
 
@@ -43,10 +55,11 @@ where user_role='student' and user_dob between '2000-03-01' and '2001-09-13' hav
 
 
 /*Task 6. display number of students belongs to class I and Class II */
-select count(*) as students from users join
-enroll on users.user_id=enroll.class_id;
-select count(*)as students from class
-join enroll on class.id=enroll.class_id;
+select class.class_name, COUNT(enroll.student_id) as student_count
+from class 
+join enroll on class.id = enroll.class_id
+where class.class_name in ('I', 'II')
+group by class.class_name;
 
 
 
