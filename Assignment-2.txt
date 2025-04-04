@@ -1,0 +1,86 @@
+1. Create database employee_masters
+create database employee_masters;
+
+2. create table departments with dept_id,dept_name;
+create table department(
+	dept_id int,
+    dept_name varchar(20)
+);
+
+3. Create table employees with columns emp_id, emp_first_name, emp_last_name, emp_joining_date, emp_dept
+create table employee(
+	emp_id int primary key auto_increment,
+    emp_first_name varchar(20),
+    emp_last_name varchar(20),
+    emp_joining_date date,
+    emp_dept varchar(20)
+);
+alter table employee auto_increment=101;
+
+4. create table employee_position with column emp_user_id, pos_name, effective_from
+create table employee_position(
+	emp_user_id int,
+    pos_name varchar(20),
+    effective_from date
+);
+
+5. add 4 department Admin, HR, Sales
+insert into department
+values(101,'Admin'),
+(102,'HR'),
+(103,'Sales'),
+(104,'Development');
+
+
+6. add 2 users in Admin, 2 in HR, 4 in Sales
+insert into employee (emp_first_name,emp_last_name,emp_joining_date,emp_dept)
+values('James','Cameron','2022-04-12','Admin'),
+('Robb','Stark','2022-05-20','Admin'),
+('Pite','Mitchell','2022-06-25','HR'),
+('Rohit','Sharma','2022-07-01','HR'),
+('Amrendra','Mitchele','2022-08-04','Sales'),
+('Robert','Pattinson','2022-09-09','Sales'),
+('Vini','Jr','2022-08-15','Sales'),
+('Kylien','Mbappe','2022-11-23','Sales');
+
+7. Add 1st admin user position as Manager and effective date is 2 month before of todays date, 2nd admin user position is Associative and effective date is 1 month before of todays date
+8. Add 1st HR user position as Executive and effective date is 1 month before of todays date, 2nd hr user position is Associative and effective date is 15 days before of todays date
+9. Add 1st two Sales user position as Manager and effective date is 1 month before of todays date, remaning Sales user position is Trainee and effective date is 15 days before of todays date
+insert into employee_position
+values(101,'Manager',(curdate()-interval '2' month)),	
+(102,'Associative',(curdate()-interval '1' month)),
+(103,'Executive',(curdate()-interval '1' month)),
+(104,'Associative',(curdate()-interval'15' day)),
+(105,'Manager',(curdate()-interval '1' month)),
+(106,'Manager',(curdate()-interval '1' month)),
+(107,'Traniee',(curdate()-interval '15' day)),
+(108,'Traniee',(curdate()-interval '15' day));
+
+10. Display all employee details with department, position details 
+select*from employee;
+select e.emp_id,e.emp_first_name,e.emp_last_name,e.emp_joining_date,e.emp_dept,p.pos_name from employee e
+join department d on e.emp_dept=d.dept_name
+join employee_position p on p.emp_user_id=e.emp_id;
+
+11. Display all users first name and last name is uppercase letter whos position is Manager and effective date is 2022-04-01 to 2022-05-01 sort by joining date and department name 
+select upper(e.emp_first_name) as first_name,upper(e.emp_last_name) as last_name,e.emp_joining_date	,p.pos_name,p.effective_from from employee e
+join employee_position p on e.emp_id=p.emp_user_id	
+where p.pos_name='Manager' and p.effective_from between '2025-03-01' and '2025-04-01'
+order by e.emp_joining_date , e.emp_dept;
+
+12. Add new position Jr. HR and effective date is todays date to users whos department is HR and who's position is Exective
+update employee_position p
+join employee e on e.emp_id=p.emp_user_id
+join department d on d.dept_name=e.emp_dept
+set p.pos_name='Jr. HR', p.effective_from=curdate()
+where d.dept_name='HR' and p.pos_name='Executive';
+
+13. update one User department to Admin whos position is Trainee
+update employee
+set emp_dept='Admin'
+where emp_id in (select emp_user_id from employee_position where pos_name='Traniee' ) limit 1;
+
+14. delete user whos first name start with A and last name end with E
+delete from employee
+where emp_first_name like 'A%' and emp_last_name like '%E';
+select*from employee;
