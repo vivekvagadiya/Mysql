@@ -1,11 +1,13 @@
 1. Create database employee_masters
 create database employee_masters;
 
+
 2. create table departments with dept_id,dept_name;
 create table department(
 	dept_id int,
     dept_name varchar(20)
 );
+
 
 3. Create table employees with columns emp_id, emp_first_name, emp_last_name, emp_joining_date, emp_dept
 create table employee(
@@ -17,12 +19,14 @@ create table employee(
 );
 alter table employee auto_increment=101;
 
+
 4. create table employee_position with column emp_user_id, pos_name, effective_from
 create table employee_position(
 	emp_user_id int,
     pos_name varchar(20),
     effective_from date
 );
+
 
 5. add 4 department Admin, HR, Sales
 insert into department
@@ -43,6 +47,7 @@ values('James','Cameron','2022-04-12','Admin'),
 ('Vini','Jr','2022-08-15','Sales'),
 ('Kylien','Mbappe','2022-11-23','Sales');
 
+
 7. Add 1st admin user position as Manager and effective date is 2 month before of todays date, 2nd admin user position is Associative and effective date is 1 month before of todays date
 8. Add 1st HR user position as Executive and effective date is 1 month before of todays date, 2nd hr user position is Associative and effective date is 15 days before of todays date
 9. Add 1st two Sales user position as Manager and effective date is 1 month before of todays date, remaning Sales user position is Trainee and effective date is 15 days before of todays date
@@ -56,17 +61,20 @@ values(101,'Manager',(curdate()-interval '2' month)),
 (107,'Traniee',(curdate()-interval '15' day)),
 (108,'Traniee',(curdate()-interval '15' day));
 
+
 10. Display all employee details with department, position details 
 select*from employee;
 select e.emp_id,e.emp_first_name,e.emp_last_name,e.emp_joining_date,e.emp_dept,p.pos_name from employee e
 join department d on e.emp_dept=d.dept_name
 join employee_position p on p.emp_user_id=e.emp_id;
 
+
 11. Display all users first name and last name is uppercase letter whos position is Manager and effective date is 2022-04-01 to 2022-05-01 sort by joining date and department name 
-select upper(e.emp_first_name) as first_name,upper(e.emp_last_name) as last_name,e.emp_joining_date	,p.pos_name,p.effective_from from employee e
+select upper(e.emp_first_name) as first_name,upper(e.emp_last_name) as last_name,e.emp_joining_date,p.pos_name,p.effective_from from employee e
 join employee_position p on e.emp_id=p.emp_user_id	
 where p.pos_name='Manager' and p.effective_from between '2025-03-01' and '2025-04-01'
 order by e.emp_joining_date , e.emp_dept;
+
 
 12. Add new position Jr. HR and effective date is todays date to users whos department is HR and who's position is Exective
 update employee_position p
@@ -75,10 +83,12 @@ join department d on d.dept_name=e.emp_dept
 set p.pos_name='Jr. HR', p.effective_from=curdate()
 where d.dept_name='HR' and p.pos_name='Executive';
 
+
 13. update one User department to Admin whos position is Trainee
 update employee
 set emp_dept='Admin'
 where emp_id in (select emp_user_id from employee_position where pos_name='Traniee' ) limit 1;
+
 
 14. delete user whos first name start with A and last name end with E
 delete from employee
